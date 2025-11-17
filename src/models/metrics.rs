@@ -55,6 +55,65 @@ impl MemoryMetrics {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct NetworkMetrics {
+    pub received_bytes: u64,
+    pub transmitted_bytes: u64,
+    pub received_rate: f32,
+    pub transmitted_rate: f32,
+}
+
+impl NetworkMetrics {
+    pub fn zero() -> Self {
+        Self {
+            received_bytes: 0,
+            transmitted_bytes: 0,
+            received_rate: 0.0,
+            transmitted_rate: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct DiskMetrics {
+    pub read_bytes: u64,
+    pub written_bytes: u64,
+    pub read_rate: f32,
+    pub write_rate: f32,
+}
+
+impl DiskMetrics {
+    pub fn zero() -> Self {
+        Self {
+            read_bytes: 0,
+            written_bytes: 0,
+            read_rate: 0.0,
+            write_rate: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SystemMetrics {
+    pub cpu: CPUMetrics,
+    pub memory: MemoryMetrics,
+    pub network: NetworkMetrics,
+    pub disk: DiskMetrics,
+    pub timestamp: SystemTime,
+}
+
+impl SystemMetrics {
+    pub fn zero() -> Self {
+        Self {
+            cpu: CPUMetrics::zero(),
+            memory: MemoryMetrics::zero(),
+            network: NetworkMetrics::zero(),
+            disk: DiskMetrics::zero(),
+            timestamp: SystemTime::now(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
