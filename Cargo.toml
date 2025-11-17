@@ -2,5 +2,42 @@
 name = "perch"
 version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
+authors = ["Connor Flowers <cjflowers@pm.me>"]
+license = ""
+description = "Lightweight cross-platform system monitor widget"
+repository = "https://github.com/c-florist/perch"
+keywords = ["system-monitor", "widget", "metrics", "cross-platform"]
 
 [dependencies]
+eframe = "0.33"
+egui = "0.33"
+sysinfo = "0.37"
+confy = "2.0"
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1.48", features = ["rt-multi-thread", "time", "sync"] }
+anyhow = "1.0"
+chrono = "0.4"
+
+[dev-dependencies]
+assert_approx_eq = "1.1"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.release.package."*"]
+opt-level = "z"
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+[target.aarch64-unknown-linux-gnu]
+rustflags = ["-C", "target-feature=+crt-static"]
+
+#[[bench]]
+#name = "metrics_bench"
+#harness = false
