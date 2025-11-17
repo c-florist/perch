@@ -181,6 +181,18 @@ mod tests {
     }
 
     #[test]
+    fn test_network_bytes_are_cumulative() {
+        let mut monitor = SystemMonitor::new();
+
+        let first = monitor.collect();
+        std::thread::sleep(Duration::from_secs(1));
+        let second = monitor.collect();
+
+        assert!(second.network.received_bytes >= first.network.received_bytes);
+        assert!(second.network.transmitted_bytes >= first.network.transmitted_bytes);
+    }
+
+    #[test]
     fn test_multiple_collections() {
         let mut monitor = SystemMonitor::new();
 
