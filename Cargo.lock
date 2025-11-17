@@ -2314,6 +2314,7 @@ dependencies = [
  "egui",
  "serde",
  "sysinfo",
+ "tempfile",
  "tokio",
  "toml",
 ]
