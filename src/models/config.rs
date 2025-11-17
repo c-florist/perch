@@ -11,6 +11,19 @@ pub enum WindowPosition {
 
 impl Default for WindowPosition {
     fn default() -> Self {
-        WindowPosition::TopRight
+        Self::TopRight
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub enum Theme {
+    Dark,
+    Light,
+    Catppuccin,
+}
+
+impl Default for Theme {
+    fn default() -> Self {
+        Self::Dark
     }
 }
