@@ -1,31 +1,24 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum WindowPosition {
     TopLeft,
+    #[default]
     TopRight,
     BottomLeft,
     BottomRight,
-    Custom { x: u32, y: u32 },
+    Custom {
+        x: u32,
+        y: u32,
+    },
 }
 
-impl Default for WindowPosition {
-    fn default() -> Self {
-        Self::TopRight
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum Theme {
+    #[default]
     Dark,
     Light,
     Catppuccin,
-}
-
-impl Default for Theme {
-    fn default() -> Self {
-        Self::Dark
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
