@@ -1,8 +1,7 @@
 use crate::models::{SystemMetrics, UserConfig};
 use crate::services::{format_bytes, format_rate};
-use crate::ui::{ColorScheme, metric_row, progress_bar_with_text, section_header};
+use crate::ui::{ColorScheme, metric_row, progress_bar_with_text, section_header, compact_metric, compact_percentage_bar, compact_text_bar};
 use egui::{Context, Ui, Color32, ProgressBar};
-use crate::ui::components::{compact_metric, compact_progress_bar};
 
 pub fn render_widget(
     ctx: &Context,
@@ -85,7 +84,7 @@ fn render_header(ui: &mut Ui, colors: &ColorScheme, show_settings: &mut bool) {
 
 fn render_cpu(ui: &mut Ui, cpu: &crate::models::CPUMetrics, colors: &ColorScheme, config: &UserConfig) {
     let cpu_color = colors.cpu_color(cpu.usage_percentage);
-    compact_progress_bar(
+    compact_percentage_bar(
         ui,
         "CPU",
         cpu.usage_percentage / 100.0,
@@ -97,7 +96,7 @@ fn render_cpu(ui: &mut Ui, cpu: &crate::models::CPUMetrics, colors: &ColorScheme
         ui.collapsing("cores", |ui| {
             for (i, core_usage) in cpu.per_core.iter().enumerate() {
                 let core_color = colors.cpu_color(*core_usage);
-                compact_progress_bar(
+                compact_percentage_bar(
                     ui,
                     &format!("C{}", i),
                     *core_usage / 100.0,
@@ -120,21 +119,13 @@ fn render_memory(ui: &mut Ui, memory: &crate::models::MemoryMetrics, colors: &Co
         format_bytes(memory.total_bytes)
     );
 
-    ui.horizontal(|ui| {
-        ui.label(
-            egui::RichText::new("MEM")
-                .monospace()
-                .size(11.0)
-                .color(Color32::GRAY)
-        );
-        ui.add(
-            ProgressBar::new(mem_usage / 100.0)
-                .fill(mem_color)
-                .desired_width(ui.available_width())
-                .text(mem_text)
-                .animate(false)
-        );
-    });
+    compact_text_bar(
+        ui,
+        "MEM",
+        mem_usage / 100.0,
+        mem_color,
+        &mem_text,
+    );
 
     if memory.swap_total_bytes > 0 {
         let swap_usage = memory.swap_percentage();
@@ -146,21 +137,13 @@ fn render_memory(ui: &mut Ui, memory: &crate::models::MemoryMetrics, colors: &Co
             format_bytes(memory.swap_total_bytes)
         );
 
-        ui.horizontal(|ui| {
-            ui.label(
-                egui::RichText::new("SWP")
-                    .monospace()
-                    .size(11.0)
-                    .color(Color32::GRAY)
-            );
-            ui.add(
-                ProgressBar::new(swap_usage / 100.0)
-                    .fill(swap_color)
-                    .desired_width(ui.available_width())
-                    .text(swap_text)
-                    .animate(false)
-            );
-        });
+        compact_text_bar(
+            ui,
+            "SWAP",
+            swap_usage / 100.0,
+            swap_color,
+            &swap_text,
+        )
     }
 }
 

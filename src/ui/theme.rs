@@ -30,8 +30,8 @@ impl ColorScheme {
             secondary: Color32::from_rgb(150, 100, 255),
             text: Color32::from_rgb(240, 240, 245),
             text_dim: Color32::from_rgb(160, 160, 170),
-            success: Color32::from_rgb(80, 200, 120),
-            warning: Color32::from_rgb(255, 180, 50),
+            success: Color32::from_rgb(60, 160, 100),
+            warning: Color32::from_rgb(200, 150, 60),
             error: Color32::from_rgb(255, 100, 100),
         }
     }
@@ -44,7 +44,7 @@ impl ColorScheme {
             secondary: Color32::from_rgb(100, 50, 200),
             text: Color32::from_rgb(20, 20, 25),
             text_dim: Color32::from_rgb(100, 100, 110),
-            success: Color32::from_rgb(40, 150, 80),
+            success: Color32::from_rgb(30, 120, 70),
             warning: Color32::from_rgb(200, 130, 20),
             error: Color32::from_rgb(200, 50, 50),
         }
@@ -58,7 +58,7 @@ impl ColorScheme {
             secondary: Color32::from_rgb(203, 166, 247),
             text: Color32::from_rgb(205, 214, 244),
             text_dim: Color32::from_rgb(147, 153, 178),
-            success: Color32::from_rgb(166, 227, 161),
+            success: Color32::from_rgb(140, 190, 140),
             warning: Color32::from_rgb(249, 226, 175),
             error: Color32::from_rgb(243, 139, 168),
         }

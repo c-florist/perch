@@ -63,7 +63,7 @@ pub fn compact_metric(
     });
 }
 
-pub fn compact_progress_bar(
+pub fn compact_percentage_bar(
     ui: &mut Ui,
     label: &str,
     fraction: f32,
@@ -73,14 +73,40 @@ pub fn compact_progress_bar(
         ui.label(
             egui::RichText::new(label)
                 .monospace()
-                .size(11.0)
+                .size(10.0)
                 .color(Color32::GRAY)
         );
         ui.add(
             ProgressBar::new(fraction)
                 .fill(color)
+                .desired_height(ui.available_width() / 10.0)
                 .desired_width(ui.available_width())
                 .show_percentage()
+                .animate(false)
+        );
+    });
+}
+
+pub fn compact_text_bar(
+    ui: &mut Ui,
+    label: &str,
+    fraction: f32,
+    color: Color32,
+    text: &str,
+) {
+    ui.horizontal(|ui| {
+        ui.label(
+            egui::RichText::new(label)
+                .monospace()
+                .size(10.0)
+                .color(Color32::GRAY)
+        );
+        ui.add(
+            ProgressBar::new(fraction)
+                .fill(color)
+                .desired_height(ui.available_width() / 10.0)
+                .desired_width(ui.available_width())
+                .text(text)
                 .animate(false)
         );
     });
