@@ -1,7 +1,7 @@
 use crate::models::{SystemMetrics, UserConfig};
 use crate::services::{format_bytes, format_rate};
 use crate::ui::{ColorScheme, metric_row, progress_bar_with_text, section_header};
-use egui::{Context, Ui, Color32};
+use egui::{Context, Ui, Color32, ProgressBar};
 use crate::ui::components::{compact_metric, compact_progress_bar};
 
 pub fn render_widget(
@@ -114,22 +114,53 @@ fn render_memory(ui: &mut Ui, memory: &crate::models::MemoryMetrics, colors: &Co
     let mem_usage = memory.usage_percentage();
     let mem_color = colors.memory_color(mem_usage);
 
-    compact_progress_bar(
-        ui,
-        "MEM",
-        mem_usage / 100.0,
-        mem_color,
+    let mem_text = format!(
+        "{}/{}",
+        format_bytes(memory.used_bytes),
+        format_bytes(memory.total_bytes)
     );
+
+    ui.horizontal(|ui| {
+        ui.label(
+            egui::RichText::new("MEM")
+                .monospace()
+                .size(11.0)
+                .color(Color32::GRAY)
+        );
+        ui.add(
+            ProgressBar::new(mem_usage / 100.0)
+                .fill(mem_color)
+                .desired_width(ui.available_width())
+                .text(mem_text)
+                .animate(false)
+        );
+    });
 
     if memory.swap_total_bytes > 0 {
         let swap_usage = memory.swap_percentage();
         let swap_color = colors.memory_color(swap_usage);
-        compact_progress_bar(
-            ui,
-            "SWP",
-            swap_usage / 100.0,
-            swap_color,
+
+        let swap_text = format!(
+            "{}/{}",
+            format_bytes(memory.swap_used_bytes),
+            format_bytes(memory.swap_total_bytes)
         );
+
+        ui.horizontal(|ui| {
+            ui.label(
+                egui::RichText::new("SWP")
+                    .monospace()
+                    .size(11.0)
+                    .color(Color32::GRAY)
+            );
+            ui.add(
+                ProgressBar::new(swap_usage / 100.0)
+                    .fill(swap_color)
+                    .desired_width(ui.available_width())
+                    .text(swap_text)
+                    .animate(false)
+            );
+        });
     }
 }
 
