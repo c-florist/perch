@@ -1,16 +1,18 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default, Clone, Copy, PartialEq, Serialize, Deserialize)]
-pub enum WindowPosition {
-    TopLeft,
-    #[default]
-    TopRight,
-    BottomLeft,
-    BottomRight,
-    Custom {
-        x: u32,
-        y: u32,
-    },
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub struct WindowPosition {
+    pub x: f32,
+    pub y: f32,
+}
+
+impl Default for WindowPosition {
+    fn default() -> Self {
+        Self {
+            x: 100.0,
+            y: 100.0,
+        }
+    }
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -23,7 +25,7 @@ pub enum Theme {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UserConfig {
-    pub window: WindowPosition,
+    pub window_position: WindowPosition,
     pub transparency: f32,
     pub refresh_interval_secs: f32,
     pub always_on_top: bool,
@@ -34,7 +36,7 @@ pub struct UserConfig {
 impl Default for UserConfig {
     fn default() -> Self {
         Self {
-            window: WindowPosition::default(),
+            window_position: WindowPosition::default(),
             transparency: 0.8,
             refresh_interval_secs: 1.0,
             always_on_top: true,
@@ -57,8 +59,9 @@ mod tests {
     }
 
     #[test]
-    fn test_window_position_default_is_top_right() {
+    fn test_window_position_default() {
         let position = WindowPosition::default();
-        assert_eq!(position, WindowPosition::TopRight);
+        assert_eq!(position.x, 100.0);
+        assert_eq!(position.y, 100.0);
     }
 }

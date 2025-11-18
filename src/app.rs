@@ -1,4 +1,4 @@
-use crate::models::{SystemMetrics, UserConfig, WindowPosition};
+use crate::models::{SystemMetrics, UserConfig};
 use crate::services::{ConfigManager, SystemMonitor};
 use std::time::{Duration, Instant};
 use crate::ui::render_widget;
@@ -49,32 +49,10 @@ impl PerchApp {
     }
 
     fn apply_window_position(&self, ctx: &egui::Context) {
-        let screen_rect = ctx.input(|i| {
-            i.viewport()
-                .monitor_size
-                .unwrap_or(egui::Vec2::new(1920.0, 1080.0))
-        });
-
-        let window_size = egui::Vec2::new(300.0, 450.0);
-
-        let pos = match self.config.window {
-            WindowPosition::TopLeft => egui::Pos2::new(20.0, 20.0),
-            WindowPosition::TopRight => egui::Pos2::new(
-                screen_rect.x - window_size.x - 20.0,
-                20.0,
-            ),
-            WindowPosition::BottomLeft => egui::Pos2::new(
-                20.0,
-                screen_rect.y - window_size.y - 20.0,
-            ),
-            WindowPosition::BottomRight => egui::Pos2::new(
-                screen_rect.x - window_size.x - 20.0,
-                screen_rect.y - window_size.y - 20.0,
-            ),
-            WindowPosition::Custom { x, y } => {
-                egui::Pos2::new(x as f32, y as f32)
-            }
-        };
+        let pos = egui::Pos2::new(
+            self.config.window_position.x,
+            self.config.window_position.y,
+        );
 
         ctx.send_viewport_cmd(egui::ViewportCommand::OuterPosition(pos));
     }
@@ -84,10 +62,26 @@ impl eframe::App for PerchApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.update_metrics();
 
-        // if !self.positioned {
-        //     self.apply_window_position(ctx);
-        //     self.positioned = true;
-        // }
+        if !self.positioned {
+            self.apply_window_position(ctx);
+            self.positioned = true;
+        }
+
+        let current_window_pos = ctx.input(|i| i.viewport().outer_rect);
+        if let Some(rect) = current_window_pos {
+            let new_x = rect.min.x;
+            let new_y = rect.min.y;
+
+            let x_changed = (new_x - self.config.window_position.x).abs() > 1.0;
+            let y_changed = (new_y - self.config.window_position.y).abs() > 1.0;
+
+            if x_changed || y_changed {
+                self.config.window_position.x = new_x;
+                self.config.window_position.y = new_y;
+
+                self.save_config();
+            }
+        }
 
         render_widget(ctx, &self.metrics, &self.config, &mut self.show_settings);
         ctx.request_repaint_after(Duration::from_secs_f32(self.config.refresh_interval_secs));

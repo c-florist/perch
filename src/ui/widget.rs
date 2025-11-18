@@ -1,7 +1,6 @@
 use crate::models::{SystemMetrics, UserConfig};
-use crate::services::format::{format_bytes, format_rate};
-use crate::ui::components::{metric_row, progress_bar_with_text, section_header};
-use crate::ui::theme::ColorScheme;
+use crate::services::{format_bytes, format_rate};
+use crate::ui::{ColorScheme, metric_row, progress_bar_with_text, section_header};
 use egui::{Context, Ui};
 
 pub fn render_widget(
@@ -17,7 +16,7 @@ pub fn render_widget(
         .frame(
             egui::Frame::default()
                 .fill(bg_color)
-                .corner_radius(10.0)
+                .corner_radius(20.0)
                 .inner_margin(12.0)
                 .shadow(egui::epaint::Shadow {
                     offset: [0, 4],
@@ -27,8 +26,18 @@ pub fn render_widget(
                 }),
         )
         .show(ctx, |ui| {
+            let panel_response = ui.interact(
+                ui.max_rect(),
+                ui.id().with("drag_area"),
+                egui::Sense::drag(),
+            );
+
+            if panel_response.drag_started() {
+                ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
+            }
+
             render_header(ui, &colors, show_settings);
-            ui.add_space(8.0);
+            ui.add_space(4.0);
             render_cpu(ui, &metrics.cpu, &colors, config);
             render_memory(ui, &metrics.memory, &colors);
             render_network(ui, &metrics.network, &colors);
@@ -40,7 +49,7 @@ fn render_header(ui: &mut Ui, colors: &ColorScheme, show_settings: &mut bool) {
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new("perch")
-                .size(18.0)
+                .size(14.0)
                 .strong()
                 .color(colors.primary),
         );
