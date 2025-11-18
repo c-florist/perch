@@ -9,7 +9,11 @@ fn main() -> eframe::Result<()> {
     let native_options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([400.0, 500.0])
-            .with_title("perch - System Monitor"),
+            .with_decorations(false)
+            .with_transparent(true)
+            .with_always_on_top()
+            .with_resizable(true)
+            .with_title("perch"),
         ..Default::default()
     };
 

@@ -17,7 +17,7 @@ pub fn render_widget(
         .frame(
             egui::Frame::default()
                 .fill(bg_color)
-                .rounding(10.0)
+                .corner_radius(10.0)
                 .inner_margin(12.0)
                 .shadow(egui::epaint::Shadow {
                     offset: [0, 4],
