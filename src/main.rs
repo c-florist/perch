@@ -1,6 +1,7 @@
 mod app;
 mod models;
 mod services;
+mod ui;
 
 use app::PerchApp;
 
