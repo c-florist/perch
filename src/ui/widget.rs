@@ -10,19 +10,30 @@ pub fn render_widget(
     show_settings: &mut bool,
 ) {
     let colors = ColorScheme::from_theme(config.theme);
-    let bg_color = colors.background.linear_multiply(config.transparency);
+
+    let is_hovering = ctx.input(|i| {
+        i.pointer.hover_pos().is_some()
+    });
+
+    let transparency = if is_hovering {
+        (config.transparency + 0.2).min(1.0)
+    } else {
+        config.transparency
+    };
+
+    let bg_color = colors.background.linear_multiply(transparency);
 
     egui::CentralPanel::default()
         .frame(
             egui::Frame::default()
                 .fill(bg_color)
-                .corner_radius(20.0)
-                .inner_margin(12.0)
+                .corner_radius(8.0)
+                .inner_margin(8.0)
                 .shadow(egui::epaint::Shadow {
-                    offset: [0, 4],
-                    blur: 16,
+                    offset: [0, 2],
+                    blur: 8,
                     spread: 0,
-                    color: egui::Color32::from_black_alpha(100),
+                    color: egui::Color32::from_black_alpha(80),
                 }),
         )
         .show(ctx, |ui| {
