@@ -37,7 +37,7 @@ impl Default for UserConfig {
     fn default() -> Self {
         Self {
             window_position: WindowPosition::default(),
-            transparency: 0.8,
+            transparency: 0.6,
             refresh_interval_secs: 1.0,
             always_on_top: true,
             show_cpu_per_core: false,
