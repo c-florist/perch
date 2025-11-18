@@ -3,6 +3,7 @@ use crate::services::{format_bytes, format_rate};
 use crate::ui::{ColorScheme, metric_row, progress_bar_with_text, section_header, compact_metric, compact_percentage_bar, compact_text_bar};
 use egui::{Context, Ui, Color32, ProgressBar};
 
+
 pub fn render_widget(
     ctx: &Context,
     metrics: &SystemMetrics,
@@ -11,10 +12,30 @@ pub fn render_widget(
 ) {
     let colors = ColorScheme::from_theme(config.theme);
 
+    let is_hovering = ctx.input(|i| {
+        if let Some(pos) = i.pointer.hover_pos() {
+            true
+        } else {
+            false
+        }
+    });
+
+    let ui_hovered = ctx.is_pointer_over_area();
+
+    let is_hovering = is_hovering || ui_hovered;
+
+    let transparency = if is_hovering {
+        (config.transparency + 0.3).min(1.0)
+    } else {
+        config.transparency
+    };
+
+    let bg_color = colors.background.linear_multiply(transparency);
+
     egui::CentralPanel::default()
         .frame(
             egui::Frame::default()
-                .fill(egui::Color32::TRANSPARENT)
+                .fill(bg_color)
                 .corner_radius(8.0)
                 .inner_margin(8.0)
                 .shadow(egui::epaint::Shadow {
@@ -28,23 +49,7 @@ pub fn render_widget(
             let panel_response = ui.interact(
                 ui.max_rect(),
                 ui.id().with("drag_area"),
-                egui::Sense::click_and_drag(),
-            );
-
-            let is_hovering = panel_response.hovered();
-
-            let transparency = if is_hovering {
-                (config.transparency + 0.3).min(1.0)
-            } else {
-                config.transparency
-            };
-
-            let bg_color = colors.background.linear_multiply(transparency);
-
-            ui.painter().rect_filled(
-                ui.max_rect(),
-                8.0,
-                bg_color,
+                egui::Sense::drag(),
             );
 
             if panel_response.drag_started() {
@@ -64,6 +69,7 @@ fn render_header(ui: &mut Ui, colors: &ColorScheme, show_settings: &mut bool) {
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new("perch")
+                .family(egui::FontFamily::Monospace)
                 .size(12.0)
                 .strong()
                 .color(colors.primary),
@@ -71,7 +77,11 @@ fn render_header(ui: &mut Ui, colors: &ColorScheme, show_settings: &mut bool) {
 
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if ui
-                .small_button(egui::RichText::new("⚙").size(14.0))
+                .small_button(
+                    egui::RichText::new("⚙")
+                        .family(egui::FontFamily::Monospace)
+                        .size(14.0)
+                )
                 .on_hover_text("Settings")
                 .clicked()
             {
@@ -156,12 +166,14 @@ fn render_network_and_disk(
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new("↓")
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(Color32::GRAY)
                 .size(11.0)
         );
         ui.label(
             egui::RichText::new(format_rate(network.received_rate as u64))
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(colors.primary)
                 .size(11.0)
@@ -171,12 +183,14 @@ fn render_network_and_disk(
 
         ui.label(
             egui::RichText::new("↑")
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(Color32::GRAY)
                 .size(11.0)
         );
         ui.label(
             egui::RichText::new(format_rate(network.transmitted_rate as u64))
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(colors.secondary)
                 .size(11.0)
@@ -186,12 +200,14 @@ fn render_network_and_disk(
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new("R")
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(Color32::GRAY)
                 .size(11.0)
         );
         ui.label(
             egui::RichText::new(format_rate(disk.read_rate as u64))
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(colors.success)
                 .size(11.0)
@@ -201,12 +217,14 @@ fn render_network_and_disk(
 
         ui.label(
             egui::RichText::new("W")
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(Color32::GRAY)
                 .size(11.0)
         );
         ui.label(
             egui::RichText::new(format_rate(disk.write_rate as u64))
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(colors.warning)
                 .size(11.0)

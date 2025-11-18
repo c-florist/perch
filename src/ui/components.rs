@@ -7,9 +7,9 @@ pub fn metric_row(
     color: Color32,
 ) -> Response {
     ui.horizontal(|ui| {
-        ui.label(egui::RichText::new(label).monospace().color(Color32::GRAY));
+        ui.label(egui::RichText::new(label).family(egui::FontFamily::Monospace).monospace().color(Color32::GRAY));
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            ui.label(egui::RichText::new(value).monospace().strong().color(color));
+            ui.label(egui::RichText::new(value).family(egui::FontFamily::Monospace).monospace().strong().color(color));
         });
     })
         .response
@@ -22,7 +22,7 @@ pub fn progress_bar_with_text(
     text: &str,
     color: Color32,
 ) {
-    ui.label(egui::RichText::new(label).monospace().small());
+    ui.label(egui::RichText::new(label).family(egui::FontFamily::Monospace).monospace().small());
     ui.add(
         ProgressBar::new(fraction)
             .fill(color)
@@ -33,7 +33,7 @@ pub fn progress_bar_with_text(
 
 pub fn section_header(ui: &mut Ui, text: &str) {
     ui.add_space(6.0);
-    ui.label(egui::RichText::new(text).strong().size(12.0));
+    ui.label(egui::RichText::new(text).family(egui::FontFamily::Monospace).strong().size(12.0));
     ui.separator();
     ui.add_space(2.0);
 }
@@ -47,6 +47,7 @@ pub fn compact_metric(
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new(label)
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .color(Color32::GRAY)
                 .size(11.0)
@@ -54,6 +55,7 @@ pub fn compact_metric(
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             ui.label(
                 egui::RichText::new(value)
+                    .family(egui::FontFamily::Monospace)
                     .monospace()
                     .strong()
                     .color(color)
@@ -72,6 +74,7 @@ pub fn compact_percentage_bar(
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new(label)
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .size(10.0)
                 .color(Color32::GRAY)
@@ -97,6 +100,7 @@ pub fn compact_text_bar(
     ui.horizontal(|ui| {
         ui.label(
             egui::RichText::new(label)
+                .family(egui::FontFamily::Monospace)
                 .monospace()
                 .size(10.0)
                 .color(Color32::GRAY)
