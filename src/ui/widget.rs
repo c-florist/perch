@@ -1,7 +1,7 @@
 use crate::models::{SystemMetrics, UserConfig};
 use crate::services::{format_bytes, format_rate};
 use crate::ui::{ColorScheme, metric_row, progress_bar_with_text, section_header};
-use egui::{Context, Ui};
+use egui::{Context, Ui, Color32};
 use crate::ui::components::{compact_metric, compact_progress_bar};
 
 pub fn render_widget(
@@ -56,8 +56,8 @@ pub fn render_widget(
             ui.add_space(4.0);
             render_cpu(ui, &metrics.cpu, &colors, config);
             render_memory(ui, &metrics.memory, &colors);
-            render_network(ui, &metrics.network, &colors);
-            render_disk(ui, &metrics.disk, &colors);
+            ui.add_space(4.0);
+            render_network_and_disk(ui, &metrics.network, &metrics.disk, &colors);
         });
 }
 
@@ -133,38 +133,69 @@ fn render_memory(ui: &mut Ui, memory: &crate::models::MemoryMetrics, colors: &Co
     }
 }
 
-fn render_network(ui: &mut Ui, network: &crate::models::NetworkMetrics, colors: &ColorScheme) {
-    ui.add_space(4.0);
+fn render_network_and_disk(
+    ui: &mut Ui,
+    network: &crate::models::NetworkMetrics,
+    disk: &crate::models::DiskMetrics,
+    colors: &ColorScheme,
+) {
+    ui.horizontal(|ui| {
+        ui.label(
+            egui::RichText::new("↓")
+                .monospace()
+                .color(Color32::GRAY)
+                .size(11.0)
+        );
+        ui.label(
+            egui::RichText::new(format_rate(network.received_rate as u64))
+                .monospace()
+                .color(colors.primary)
+                .size(11.0)
+        );
 
-    compact_metric(
-        ui,
-        "↓",
-        &format_rate(network.received_rate as u64),
-        colors.primary,
-    );
+        ui.add_space(8.0);  // Spacer
 
-    compact_metric(
-        ui,
-        "↑",
-        &format_rate(network.transmitted_rate as u64),
-        colors.secondary,
-    )
-}
+        ui.label(
+            egui::RichText::new("↑")
+                .monospace()
+                .color(Color32::GRAY)
+                .size(11.0)
+        );
+        ui.label(
+            egui::RichText::new(format_rate(network.transmitted_rate as u64))
+                .monospace()
+                .color(colors.secondary)
+                .size(11.0)
+        );
+    });
 
-fn render_disk(ui: &mut Ui, disk: &crate::models::DiskMetrics, colors: &ColorScheme) {
-    ui.add_space(4.0);
+    ui.horizontal(|ui| {
+        ui.label(
+            egui::RichText::new("R")
+                .monospace()
+                .color(Color32::GRAY)
+                .size(11.0)
+        );
+        ui.label(
+            egui::RichText::new(format_rate(disk.read_rate as u64))
+                .monospace()
+                .color(colors.success)
+                .size(11.0)
+        );
 
-    compact_metric(
-        ui,
-        "R",
-        &format_rate(disk.read_rate as u64),
-        colors.success,
-    );
+        ui.add_space(8.0);
 
-    compact_metric(
-        ui,
-        "W",
-        &format_rate(disk.write_rate as u64),
-        colors.warning,
-    );
+        ui.label(
+            egui::RichText::new("W")
+                .monospace()
+                .color(Color32::GRAY)
+                .size(11.0)
+        );
+        ui.label(
+            egui::RichText::new(format_rate(disk.write_rate as u64))
+                .monospace()
+                .color(colors.warning)
+                .size(11.0)
+        );
+    });
 }
